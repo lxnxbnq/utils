@@ -54,4 +54,4 @@ export function formatMoney(s: number, type?: number): string {
 }
 
 // 保留一位小数
-export const toFixed = (number: number) => (Math.round(number * 1000) / 10);
+export const toFixed = number => (Math.round(number * 1000) / 10);
