@@ -55,3 +55,17 @@ export function formatMoney(s: number, type?: number): string {
 
 // 保留一位小数
 export const toFixed = number => (Math.round(number * 100 * 10) / 10);
+
+// 选择文本框中的部分文本
+export const selectText = (textbox, startIndex, endIndex) => {
+  if (textbox.setSelectionRange) {
+    textbox.setSelectionRange(textbox, startIndex, endIndex)
+  } else if(typeof textbox.createTextRange === 'function') {
+      const range = textbox.createTextRange();
+      range.collapse(true);
+      range.moveStart('character', startIndex);
+      range.moveEnd('character', endIndex - startIndex);
+      range.select();
+  }
+  textbox.focus();
+}
