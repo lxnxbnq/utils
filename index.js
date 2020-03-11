@@ -82,3 +82,11 @@ export function htmlDecodeByRegExp (str){
   s = s.replace(/&quot;/g,"\"");
   return s;
 }
+
+// 小数精度运算： formatFloat(运算操作， 精确到几位小数)
+export function formatFloat(f, digit) {
+  // Math.pow(指数，幂指数)
+  var m = Math.pow(10, digit);
+  // Math.round（） 四舍五入
+  return Math.round(f * m) / m;
+}
