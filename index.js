@@ -90,3 +90,40 @@ export function formatFloat(f, digit) {
   // Math.round（） 四舍五入
   return Math.round(f * m) / m;
 }
+
+// 对象/数组 深拷贝
+export function deepClone(data) {
+  var type = Object.prototype.toString.call(data);
+  var newData;
+
+  if (type === "[object Object]") {
+    newData = {};
+    for (var key in data) {
+      if (
+        Object.prototype.toString.call(data[key]) !== "[object Object]" &&
+        Object.prototype.toString.call(data[key]) !== "[object Array]" &&
+        hasOwnProperty.call(data, key) &&
+        !hasOwnProperty.call(newData, key)
+      ) {
+        newData[key] = data[key]
+      } else {
+        newData[key] = deepClone(data[key])
+      }
+    }
+  } else if (type === "[object Array]") {
+    newData = [];
+    for (var i =0; i < data.length; i++) {
+      if (
+        Object.prototype.toString.call(data[i]) !== "[object Object]" &&
+        Object.prototype.toString.call(data[i]) !== "[object Array]"
+      ) {
+        newData.push(data[i])
+      } else {
+        newData.push(deepClone(data[i]))
+      }
+    }
+  } else {
+    return data;
+  }
+  return newData;
+}
