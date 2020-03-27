@@ -127,3 +127,36 @@ export function deepClone(data) {
   }
   return newData;
 }
+
+// 当需要下载的图片为接口返回的流时，且接口需要认证
+let filename = 'default';
+let extra = '';
+export const download = (url: string, options: any = {}): void => {
+  const defaultOptions = {
+    credentials: 'include',
+    headers: {
+      Authorization: localStorage && localStorage.getItem('token')
+    },
+    ...options
+  };
+  fetch(url, defaultOptions)
+    .then(res => {
+      const fileHeader = res.headers.get('content-disposition');
+      if (fileHeader) {
+        const ascllFileName = fileHeader.split('=')[1].split('.')[0];
+        extra = fileHeader.split('=')[1].split('.')[1];
+
+        filename = decodeURI(ascllFileName);
+      }
+      return res.blob();
+    })
+    .then(blob => URL.createObjectURL(blob))
+    .then(downloadUrl => {
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${filename}.${extra}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+};
