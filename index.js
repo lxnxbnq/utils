@@ -91,41 +91,42 @@ export function formatFloat(f, digit) {
   return Math.round(f * m) / m;
 }
 
-// 对象/数组 深拷贝
-export function deepClone(data) {
-  var type = Object.prototype.toString.call(data);
-  var newData;
+// 获取数据类型
+// 如：
+// typeStr(10) -> "Number"
+// typeStr('test') -> "String"
+// typeStr(function f(){}) -> "Function"
+// typeStr([]) -> "Array"
+// typeStr({}) -> "Object"
+const typeStr = (data) => Object.prototype.toString.call(data).replace(/\[\w+\s(\w+)\]/, "$1")
 
-  if (type === "[object Object]") {
-    newData = {};
+// 对象/数组深拷贝
+function deepClone(data) {
+  let copy;
+  if (typeStr(data) === 'Object') {
+    copy = {};
     for (var key in data) {
-      if (
-        Object.prototype.toString.call(data[key]) !== "[object Object]" &&
-        Object.prototype.toString.call(data[key]) !== "[object Array]" &&
-        hasOwnProperty.call(data, key) &&
-        !hasOwnProperty.call(newData, key)
-      ) {
-        newData[key] = data[key]
-      } else {
-        newData[key] = deepClone(data[key])
+      if (hasOwnProperty.call(data, key)) {
+        if (typeStr(data[key]) !== 'Object' && typeStr(data[key]) !== 'Array') {
+          copy[key] = data[key];
+        } else {
+          copy[key] = deepClone(data[key])
+        }
       }
     }
-  } else if (type === "[object Array]") {
-    newData = [];
-    for (var i =0; i < data.length; i++) {
-      if (
-        Object.prototype.toString.call(data[i]) !== "[object Object]" &&
-        Object.prototype.toString.call(data[i]) !== "[object Array]"
-      ) {
-        newData.push(data[i])
+  } else if (typeStr(data) === 'Array') {
+    copy = [];
+    for( var i = 0; i < data.length; i++ ) {
+      if (typeStr(data[i]) !== 'Object' && typeStr(data[i]) !== 'Array') {
+        copy.push(data[i])
       } else {
-        newData.push(deepClone(data[i]))
+        copy.push(deepClone(data[i]))
       }
     }
   } else {
     return data;
   }
-  return newData;
+  return copy;
 }
 
 // 当需要下载的图片为接口返回的流时，且接口需要认证
